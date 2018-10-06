@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/AntonioJuliano/conditional#readme",
   "devDependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-register": "^6.26.0",
     "solium": "^1.1.8",
     "truffle": "^5.0.0-beta.1"
   }

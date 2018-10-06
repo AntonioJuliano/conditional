@@ -1,22 +1,23 @@
-pragma solidity 0.4.24;
+pragma solidity 0.4.25;
 pragma experimental "v0.5.0";
 
 import { Condition } from "./Condition.sol";
 
 contract Conditional {
     event TxAdded(
-        bytes32 indexed id;
-        address indexed from;
-        bytes32 inputHash;
-        uint256 bounty;
-        address conditionContract;
-        bytes32 conditionData;
+        bytes32 indexed id,
+        address indexed from,
+        bytes32 inputHash,
+        uint256 bounty,
+        address conditionContract,
+        bytes32 conditionData
     );
 
     event TxExecuted(
-        bytes32 indexed id;
-        address indexed executer;
-        uint256 bounty;
+        bytes32 indexed id,
+        address indexed executer,
+        uint256 bounty,
+        bool success
     );
 
     struct ConditionalTx {
@@ -55,8 +56,10 @@ contract Conditional {
         );
 
         bytes32 id = keccak256(
-            msg.sender,
-            nonce
+            abi.encodePacked(
+                msg.sender,
+                nonce
+            )
         );
 
         require(
@@ -69,14 +72,15 @@ contract Conditional {
             conditionContract: conditionContract,
             bounty: msg.value,
             from: msg.sender,
-            conditionData: conditionData
+            conditionData: conditionData,
+            cancelStartTimestamp: 0
         });
 
         emit TxAdded(
             id,
             msg.sender,
             inputHash,
-            msg.valuer,
+            msg.value,
             conditionContract,
             conditionData
         );
@@ -86,7 +90,7 @@ contract Conditional {
         bytes32 id,
         address to,
         bytes4 functionSignature,
-        bytes[] data
+        bytes data
     )
         external
         //TODO nonReentrant?
@@ -99,13 +103,19 @@ contract Conditional {
         );
         // TODO hash elements of array
         require(
-            keccak256(to, functionSignature, data) == conditionalTransactions[id].inputHash,
+            keccak256(
+                abi.encodePacked(
+                    to,
+                    functionSignature,
+                    data
+                )
+            ) == conditionalTransactions[id].inputHash,
             "Conditional#executeTx: Call data is invalid"
         );
 
-        to.call(functionSignature, data);
+        bool success = to.call(functionSignature, data);
 
-        uint256 bounty = conditionalTransactions[id].bounty
+        uint256 bounty = conditionalTransactions[id].bounty;
         msg.sender.transfer(bounty);
 
         delete conditionalTransactions[id];
@@ -113,7 +123,8 @@ contract Conditional {
         emit TxExecuted(
             id,
             msg.sender,
-            bounty
+            bounty,
+            success
         );
     }
 
