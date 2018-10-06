@@ -1,0 +1,25 @@
+{
+  "name": "conditional",
+  "version": "1.0.0",
+  "description": "Ethereum based protocol to automatically conditionally execute future transactions",
+  "main": "index.js",
+  "scripts": {
+    "compile": "truffle compile",
+    "test": "truffle test",
+    "solint": "solium -d contracts/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntonioJuliano/conditional.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AntonioJuliano/conditional/issues"
+  },
+  "homepage": "https://github.com/AntonioJuliano/conditional#readme",
+  "devDependencies": {
+    "solium": "^1.1.8",
+    "truffle": "^5.0.0-beta.1"
+  }
+}
