@@ -3,12 +3,29 @@ pragma experimental "v0.5.0";
 
 import { Condition } from "../Condition.sol";
 
-contract AfterTimestampCondition is Condition {
-    function isMet(bytes32 conditionData)
+contract AfterBlockCondition is Condition {
+    function isMet(bytes conditionData)
         external
         view
         returns (bool)
     {
-        return block.number >= uint256(conditionData);
+        return block.number >= parseBlockNumber(conditionData);
+    }
+
+    function parseBlockNumber(
+        bytes conditionData
+    )
+        private
+        pure
+        returns (uint256)
+    {
+        uint256 blockNumber;
+
+        /* solium-disable-next-line security/no-inline-assembly */
+        assembly {
+            blockNumber := mload(add(conditionData, 32))
+        }
+
+        return blockNumber;
     }
 }
