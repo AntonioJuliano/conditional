@@ -56,5 +56,11 @@ data - data to send with the call. Must match the conditional transaction
 
 Node server that will listen on all on-chain conditional transactions and continuously look for opportunities to execute conditional transactions and receive bounties.
 
+### Usage
 
+```
+cd server
+npm i
+npm start
+```
 
