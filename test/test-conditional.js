@@ -1,4 +1,4 @@
-import { getInputHash, getConditionalTxId, toBytes, executeTx } from '../src/utils';
+import { getInputHash, getConditionalTxId, toBytes, executeTx, addTx } from '../src/utils';
 import BN from 'bn.js';
 
 web3.currentProvider.sendAsync = web3.currentProvider.send;
@@ -35,20 +35,24 @@ contract('Conditional', (accounts) => {
     const nonce = 1;
     const delay = 300;
     const from = accounts[1];
-    const id = getConditionalTxId(from, nonce);
     const bounty = new BN(4);
-
     const conditionData = toBytes([blockTimestamp + delay]);
 
-    const addTx = await conditional.addTx(
-      inputHash,
+    const resp = await addTx(
+      conditional,
+      testContract,
+      'test',
+      from,
       afterTimestampCondition.address,
-      nonce,
       conditionData,
-      { from, value: bounty }
+      nonce,
+      bounty,
+      arg_1,
+      arg_2,
     );
 
-    console.log('Conditional#addTx gas cost:', addTx.receipt.gasUsed);
+    const { id } = resp;
+    console.log('\tConditional#addTx gas cost:', resp.receipt.gasUsed);
 
     let [conditionalTx, executable] = await Promise.all([
       conditional.conditionalTransactions.call(id),
@@ -69,6 +73,7 @@ contract('Conditional', (accounts) => {
     expect(executable).to.be.true;
 
     const executer = accounts[2];
+
     await executeTx(conditional, id, testContract, 'test', executer, arg_1, arg_2);
 
     const [called, success] = await Promise.all([

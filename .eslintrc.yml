@@ -1,4 +1,4 @@
-extends: airbnb
+extends: eslint-config-airbnb
 parser: babel-eslint
 plugins:
   - babel
@@ -9,3 +9,4 @@ rules:
   max-len:
     - error
     - 100
+  no-use-before-define: 0

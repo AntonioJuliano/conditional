@@ -7,10 +7,12 @@ contract Conditional {
     event TxAdded(
         bytes32 indexed id,
         address indexed from,
-        bytes32 inputHash,
         uint256 bounty,
         address conditionContract,
-        bytes conditionData
+        bytes conditionData,
+        address to,
+        bytes4 functionSignature,
+        bytes data
     );
 
     event TxExecuted(
@@ -42,7 +44,9 @@ contract Conditional {
     }
 
     function addTx(
-        bytes32 inputHash,
+        address to,
+        bytes4 functionSignature,
+        bytes data,
         address conditionContract,
         uint256 nonce,
         bytes conditionData
@@ -50,39 +54,24 @@ contract Conditional {
         external
         payable
     {
-        require(
-            inputHash != bytes32(0),
-            "Conditional#addTx: inputHash cannot be 0"
+        bytes32 id = addConditionalTx(
+            to,
+            functionSignature,
+            data,
+            conditionContract,
+            nonce,
+            conditionData
         );
-
-        bytes32 id = keccak256(
-            abi.encodePacked(
-                msg.sender,
-                nonce
-            )
-        );
-
-        require(
-            conditionalTransactions[id].inputHash == bytes32(0),
-            "Conditional#addTx: tx already exists"
-        );
-
-        conditionalTransactions[id] = ConditionalTx({
-            inputHash: inputHash,
-            conditionContract: conditionContract,
-            bounty: msg.value,
-            from: msg.sender,
-            conditionData: conditionData,
-            cancelStartTimestamp: 0
-        });
 
         emit TxAdded(
             id,
             msg.sender,
-            inputHash,
             msg.value,
             conditionContract,
-            conditionData
+            conditionData,
+            to,
+            functionSignature,
+            data
         );
     }
 
@@ -101,12 +90,10 @@ contract Conditional {
             "Conditional#executeTx: Condition not met"
         );
         require(
-            keccak256(
-                abi.encodePacked(
-                    to,
-                    functionSignature,
-                    data
-                )
+            getInputHash(
+                to,
+                functionSignature,
+                data
             ) == conditionalTransactions[id].inputHash,
             "Conditional#executeTx: Call data is invalid"
         );
@@ -187,5 +174,64 @@ contract Conditional {
         return Condition(
             conditionalTransactions[id].conditionContract
         ).isMet(conditionalTransactions[id].conditionData);
+    }
+
+    function getInputHash(
+        address to,
+        bytes4 functionSignature,
+        bytes data
+    )
+        private
+        pure
+        returns (bytes32)
+    {
+        return keccak256(
+            abi.encodePacked(
+                to,
+                functionSignature,
+                data
+            )
+        );
+    }
+
+    function addConditionalTx(
+        address to,
+        bytes4 functionSignature,
+        bytes data,
+        address conditionContract,
+        uint256 nonce,
+        bytes conditionData
+    )
+        private
+        returns (bytes32)
+    {
+        bytes32 id = keccak256(
+            abi.encodePacked(
+                msg.sender,
+                nonce
+            )
+        );
+
+        require(
+            conditionalTransactions[id].inputHash == bytes32(0),
+            "Conditional#addTx: tx already exists"
+        );
+
+        bytes32 inputHash = getInputHash(
+            to,
+            functionSignature,
+            data
+        );
+
+        conditionalTransactions[id] = ConditionalTx({
+            inputHash: inputHash,
+            conditionContract: conditionContract,
+            bounty: msg.value,
+            from: msg.sender,
+            conditionData: conditionData,
+            cancelStartTimestamp: 0
+        });
+
+        return id;
     }
 }
