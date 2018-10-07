@@ -6,6 +6,7 @@
   "scripts": {
     "compile": "truffle compile",
     "test": "truffle test",
+    "migrate": "truffle migrate",
     "lint": "eslint --ext .js --ignore-path .gitignore .",
     "solint": "solium -d contracts/"
   },

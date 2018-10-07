@@ -1,5 +1,7 @@
-import { getInputHash, getConditionalTxId, toBytes, executeTx, addTx } from '../src/utils';
 import BN from 'bn.js';
+import {
+  getInputHash, getConditionalTxId, toBytes, executeTx, addTx,
+} from '../src/utils';
 
 web3.currentProvider.sendAsync = web3.currentProvider.send;
 const { wait } = require('@digix/tempo')(web3);

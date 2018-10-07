@@ -4,7 +4,12 @@ plugins:
   - babel
 env:
   es6: true
-
+  mocha: true
+  node: true
+globals:
+  web3: true
+  artifacts: true
+  contract: true
 rules:
   max-len:
     - error
@@ -12,3 +17,4 @@ rules:
   no-use-before-define: 0
   import/prefer-default-export: 0
   no-await-in-loop: 0
+  class-methods-use-this: 0

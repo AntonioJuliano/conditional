@@ -8,13 +8,13 @@ async function doMigration(deployer) {
   await Promise.all([
     deployer.deploy(
       Conditional,
-      CANCEL_TIMEOUT
+      CANCEL_TIMEOUT,
     ),
     deployer.deploy(AfterBlockCondition),
     deployer.deploy(AfterTimestampCondition),
   ]);
 }
 
-module.exports = (deployer, network, _addresses) => {
+module.exports = (deployer) => {
   deployer.then(() => doMigration(deployer));
 };
