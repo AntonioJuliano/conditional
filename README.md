@@ -6,6 +6,8 @@ Conditional transaction senders put up ETH bounties to incentivize executers to 
 
 Also included is a basic server that will listen for conditional transactions and execute them (and receive bounties) when they are executable.
 
+Currently deployed to Kovan at: [0x08167A59c490739354546BBf731664320E534528](https://kovan.etherscan.io/address/0x08167a59c490739354546bbf731664320e534528)
+
 ## Contracts
 
 ### Conditional.sol
