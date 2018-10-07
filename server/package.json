@@ -4,8 +4,7 @@
   "description": "server for conditional",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "NODE_ENV=development babel-node index.js"
   },
   "author": "Antonio Juliano",
   "license": "MIT",
@@ -13,5 +12,8 @@
     "web3": "^1.0.0-beta.36",
     "winston": "^3.1.0",
     "winston-transport": "^4.2.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0"
   }
 }
