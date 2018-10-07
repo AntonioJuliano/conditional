@@ -10,3 +10,5 @@ rules:
     - error
     - 100
   no-use-before-define: 0
+  import/prefer-default-export: 0
+  no-await-in-loop: 0

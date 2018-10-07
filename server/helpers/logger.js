@@ -1,5 +1,4 @@
 import winston from 'winston';
-import { BugsnagTransport } from './bugsnag';
 import { StackTransport } from './stack-transport';
 
 const dev = process.env.NODE_ENV === 'development';
@@ -21,14 +20,7 @@ const alignedWithColorsAndTime = winston.format.combine(
 
 const transports = [];
 
-if (!dev && !test) {
-  transports.push(
-    new BugsnagTransport({
-      level: 'error',
-      handleExceptions: true,
-    }),
-  );
-} else {
+if (dev || test) {
   transports.push(
     new StackTransport({
       level: 'error',

@@ -4,14 +4,13 @@
   "description": "server for conditional",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Antonio Juliano",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "cors": "^2.8.4",
-    "dotenv-flow": "^0.1.0",
-    "express": "^4.16.3"
+    "web3": "^1.0.0-beta.36",
+    "winston": "^3.1.0"
   }
 }

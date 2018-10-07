@@ -22,6 +22,16 @@ contract Conditional {
         bool success
     );
 
+    event CancelInitiated(
+        bytes32 indexed id,
+        address indexed canceler
+    );
+
+    event Canceled(
+        bytes32 indexed id,
+        address indexed canceler
+    );
+
     struct ConditionalTx {
         bytes32 inputHash;
         uint256 bounty;
@@ -138,6 +148,11 @@ contract Conditional {
         );
 
         conditionalTransactions[id].cancelStartTimestamp = uint32(block.timestamp);
+
+        emit CancelInitiated(
+            id,
+            msg.sender
+        );
     }
 
     function confirmCancelTx(
@@ -162,6 +177,11 @@ contract Conditional {
         msg.sender.transfer(conditionalTransactions[id].bounty);
 
         delete conditionalTransactions[id];
+
+        emit Canceled(
+            id,
+            msg.sender
+        );
     }
 
     function isExecutable(

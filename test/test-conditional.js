@@ -23,7 +23,7 @@ contract('Conditional', (accounts) => {
     const [
       arg_1,
       arg_2,
-      { timestamp: blockTimestamp }
+      { timestamp: blockTimestamp },
     ] = await Promise.all([
       testContract.ARG_1.call(),
       testContract.ARG_2.call(),

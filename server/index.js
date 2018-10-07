@@ -1,37 +1,19 @@
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import express from 'express';
-import RequestLogger from './middlewares/request-logger';
+import Logger from './helpers/logger';
+import conditional from './lib/conditional';
+import { addTx, removeTx } from './lib/tx-store';
+import { start as startExecuter } from './lib/executer';
 
-export default function (index) {
-  const app = express();
-
-  const corsOptions = {
-    origin: process.env.CORS_ORIGIN,
-    optionsSuccessStatus: 200,
-  };
-  app.use(cors(corsOptions));
-
-  app.get('/health', (req, res) => {
-    res.status(200).json({ ok: true });
+function run() {
+  Logger.info({
+    at: 'index#run',
+    message: 'App starting',
   });
 
-  app.use((req, res, next) => next());
+  conditional.events.TxAdded({}, addTx);
+  conditional.events.TxExecuted({}, removeTx);
+  conditional.events.CancelInitiated({}, removeTx);
 
-  app.use(bodyParser.json());
-
-  app.use(RequestLogger);
-
-  if (index) {
-    app.use('/v1', index);
-  }
-
-  app.use((req, res) => {
-    res.status(404).json({
-      error: 'Not Found',
-      errorCode: 404,
-    });
-  });
-
-  return app;
+  startExecuter();
 }
+
+run();
